@@ -8,7 +8,7 @@ public class Main {
 		Metodos.SecaoAurea("x^2 - 3*x + 2", -1, 3, 0.1);
 		Metodos.BuscaFibonacci("x^2 - 3*x + 2", -1, 3, 0.1);
 		Metodos.BuscaFibonacci("x^2 + 2*x", -3, 5, 0.2);
-		
+		Metodos.Bisseccao("x^2 - 4*x", 0, 3, 0.1);
 	}
 
 }

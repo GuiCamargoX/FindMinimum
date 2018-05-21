@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Vector;
 import org.mariuszgromada.math.mxparser.Argument;
 
+
 import Tool.ExpressionMath;
 
 public class Metodos {
@@ -112,9 +113,29 @@ public class Metodos {
 				 a=p;	
  		}
 		
+	
+		
 		System.out.println( setPrecision( (a+b)/2 , 4) );
 		
 		
+	}
+	
+	public static void Bisseccao(String funcao, double A, double B, double epson) {
+		double a= A, b = B;
+		double x = (a+b)/2;
+		double resder;
+		ExpressionMath fx = new ExpressionMath("der("+funcao+", x)", new Argument("x")) ;
+		while((b-a) > epson) {
+			resder = fx.calculate(x);
+			if(resder < 0)
+				a = (a+b)/2;
+			else
+				b = (a+b)/2;
+			
+			x= (a+b)/2;
+		}
+		
+		System.out.println(setPrecision(x, 4));
 	}
 	
 	private static double setPrecision(double toBeTruncated,int scale){

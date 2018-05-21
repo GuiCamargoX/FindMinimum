@@ -3,6 +3,7 @@ package Tool;
 import org.mariuszgromada.math.mxparser.Argument;
 import org.mariuszgromada.math.mxparser.Expression;
 
+
 public class ExpressionMath extends Expression{
 	
 	public ExpressionMath(String funcao, Argument x) {
