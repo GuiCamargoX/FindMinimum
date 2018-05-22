@@ -61,7 +61,7 @@ public class Metodos {
 		double fq, fp, p , q;
 		double a=A , b = B;
 		ExpressionMath fx = new ExpressionMath(funcao, new Argument("x")) ;
-		
+		int cont=0;
 		double alfa= 0.61803;
 		double beta= 0.38197;
 		
@@ -77,10 +77,10 @@ public class Metodos {
 				 b=q;
 			 else
 				 a=p;			
-			
+			cont++;
 		}
 		
-		System.out.println( setPrecision( (a+b)/2 , 4) );
+		System.out.println( setPrecision( (a+b)/2 , 4) + "-----"+ cont );
 		
 	}
 	
@@ -133,6 +133,21 @@ public class Metodos {
 				b = (a+b)/2;
 			
 			x= (a+b)/2;
+		}
+		
+		System.out.println(setPrecision(x, 4));
+	}
+	
+	public static void Newton(String funcao, double A, double B, double epson) {
+		double x = A;
+		ExpressionMath fx1 = new ExpressionMath("der("+funcao+", x)", new Argument("x")) ;
+		ExpressionMath fx2 = new ExpressionMath("der(der("+funcao+", x), x)", new Argument("x")) ;
+		double resder1=100, resder2;
+		while(resder1>epson) {
+			resder1 = fx1.calculate(x);
+			resder2 = fx2.calculate(x);
+			
+			x = x - (resder1/resder2);
 		}
 		
 		System.out.println(setPrecision(x, 4));
