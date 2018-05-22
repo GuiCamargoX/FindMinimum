@@ -9,7 +9,7 @@ public class Main {
 		Metodos.BuscaFibonacci("x^2 - 3*x + 2", -1, 3, 0.1);
 		Metodos.BuscaFibonacci("x*sin(4*x)", 0, 3, 0.1);
 		Metodos.Bisseccao("sin(3*x) + x^2", -1, 0, 0.001);
-		Metodos.Newton("x^2 - 3*x + 2", -1, 3, 0.5);
+		Metodos.Newton("(x^4) - (2*(x^2))", -3, 0, 0.1);
 	}
 
 }

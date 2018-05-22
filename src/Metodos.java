@@ -142,12 +142,14 @@ public class Metodos {
 		double x = A;
 		ExpressionMath fx1 = new ExpressionMath("der("+funcao+", x)", new Argument("x")) ;
 		ExpressionMath fx2 = new ExpressionMath("der(der("+funcao+", x), x)", new Argument("x")) ;
-		double resder1=100, resder2;
-		while(resder1>epson) {
+		double resder1=100, resder2, aux=resder1;
+		while(aux>epson) {
 			resder1 = fx1.calculate(x);
 			resder2 = fx2.calculate(x);
 			
 			x = x - (resder1/resder2);
+			if(resder1 < 0) aux=-resder1;
+			else aux = resder1;
 		}
 		
 		System.out.println(setPrecision(x, 4));
