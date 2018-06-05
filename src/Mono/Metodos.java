@@ -1,15 +1,15 @@
+package Mono;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Vector;
 import org.mariuszgromada.math.mxparser.Argument;
-
-
 import Tool.ExpressionMath;
 
 public class Metodos {
 	
-	public static void BuscaUniforme(String funcao, double a, int b,  double delta) {
+	public static double BuscaUniforme(String funcao, double a, double b,  double delta) {
 		double fq, fp, p = a, q;
 		ExpressionMath fx = new ExpressionMath(funcao, new Argument("x")) ;
 		
@@ -31,11 +31,11 @@ public class Metodos {
 			}while(fq < fp);
 		
 		p = p - delta;
-		System.out.println( setPrecision(p, 4) );
+		return setPrecision(p, 4);
 		
 	}
 	
-	public static void BuscaDicotomica(String funcao, double A, double B,  double delta, double epson){
+	public static double BuscaDicotomica(String funcao, double A, double B,  double delta, double epson){
 		double fq, fp, p , q;
 		double a=A , b = B;
 		ExpressionMath fx = new ExpressionMath(funcao, new Argument("x")) ;
@@ -53,17 +53,19 @@ public class Metodos {
 				 a=p;
 		}
 		
-		System.out.println( setPrecision( (a+b)/2 , 4) );
+		return setPrecision( (a+b)/2 , 4 );
 		
 	}
 	
-	public static void SecaoAurea(String funcao, double A, double B,  double epson ){
+	public static double SecaoAurea(String funcao, double A, double B,  double epson ){
 		double fq, fp, p , q;
 		double a=A , b = B;
 		ExpressionMath fx = new ExpressionMath(funcao, new Argument("x")) ;
-		int cont=0;
 		double alfa= 0.61803;
 		double beta= 0.38197;
+		
+		if(b<a)
+			throw new IllegalArgumentException();
 		
 		while( (b-a)>= epson){
 			
@@ -76,15 +78,14 @@ public class Metodos {
 			if( fp < fq)
 				 b=q;
 			 else
-				 a=p;			
-			cont++;
+				 a=p;
 		}
 		
-		System.out.println( setPrecision( (a+b)/2 , 4) + "-----"+ cont );
+		return setPrecision((a+b)/2 , 4) ;
 		
 	}
 	
-	public static void BuscaFibonacci(String funcao, double A, double B,  double epson ){
+	public static double BuscaFibonacci(String funcao, double A, double B,  double epson ){
 		double fq, fp, p , q;
 		double a=A , b = B;
 		ExpressionMath fx = new ExpressionMath(funcao, new Argument("x")) ;
@@ -96,7 +97,7 @@ public class Metodos {
 		double it= (b-a)/epson;
 		
 		while( fib.get(k) < it){
-			fib.add( k+1 , fib.get(k) + fib.get(k-1) );
+			fib.add( fib.get(k) + fib.get(k-1) );
 			k++;
 		}
 
@@ -112,48 +113,62 @@ public class Metodos {
 			 else
 				 a=p;	
  		}
-		
-	
-		
-		System.out.println( setPrecision( (a+b)/2 , 4) );
+				
+		return setPrecision( (a+b)/2 , 4);
 		
 		
 	}
 	
-	public static void Bisseccao(String funcao, double A, double B, double epson) {
-		double a= A, b = B;
-		double x = (a+b)/2;
+	public static double Bisseccao(String funcao, double A, double B, double epson) {
+		
+		double a= A, b = B , x = 0;
 		double resder;
 		ExpressionMath fx = new ExpressionMath("der("+funcao+", x)", new Argument("x")) ;
+		
 		while((b-a) > epson) {
+			x = (a+b)/2;
 			resder = fx.calculate(x);
-			if(resder < 0)
-				a = (a+b)/2;
-			else
-				b = (a+b)/2;
 			
-			x= (a+b)/2;
+			if(resder == 0){
+				b=a; //sai do loop
+			}else{
+				if(resder < 0)
+					a = x;
+				else
+					b = x;
+			}
+			
+			
 		}
 		
-		System.out.println(setPrecision(x, 4));
+		return setPrecision(x, 4);
+		
 	}
 	
-	public static void Newton(String funcao, double A, double B, double epson) {
-		double x = A;
-		ExpressionMath fx1 = new ExpressionMath("der("+funcao+", x)", new Argument("x")) ;
+	
+	public static double Newton(String funcao, double A, double B, double epson) {
+
+		double x = (B+A)/2 ; //chute inicial
+		double resder1=100, resder2;
+		
+		ExpressionMath fx1 = new ExpressionMath("der("+funcao+", x)", new Argument("x") ) ;
 		ExpressionMath fx2 = new ExpressionMath("der(der("+funcao+", x), x)", new Argument("x")) ;
-		double resder1=100, resder2, aux=resder1;
-		while(aux>epson) {
+		
+		
+		while( Math.abs(resder1) > epson) {
 			resder1 = fx1.calculate(x);
 			resder2 = fx2.calculate(x);
 			
+			if(resder2 == 0)
+				throw new IllegalArgumentException();
+			
 			x = x - (resder1/resder2);
-			if(resder1 < 0) aux=-resder1;
-			else aux = resder1;
+			
 		}
 		
-		System.out.println(setPrecision(x, 4));
+		return setPrecision(x, 4);
 	}
+	
 	
 	private static double setPrecision(double toBeTruncated,int scale){
 		Double truncatedDouble = BigDecimal.valueOf(toBeTruncated)
