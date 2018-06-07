@@ -14,7 +14,7 @@ public class FunctionMath extends Function {
 		String sw = new String( super.getFunctionExpressionString() );
 	
 		for(int i=0; i < super.getArgumentsNumber(); i++){
-			sw = sw.replace("x"+(i+1), "("+m[i]+")");
+			sw = sw.replace(super.getArgument(i).getArgumentName(), "("+m[i]+")");
 		}
 	
 		return sw;
