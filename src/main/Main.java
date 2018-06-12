@@ -4,6 +4,7 @@ import org.mariuszgromada.math.mxparser.Expression;
 import org.mariuszgromada.math.mxparser.Function;
 
 import Mono.Metodos;
+import MultiVariable.SolveMinimum;
 import Tool.FunctionMath;
 
 public class Main {
@@ -16,18 +17,13 @@ public class Main {
 		System.out.println( Metodos.Bisseccao("(10 + x*5)*2 + (x^10)", -11, 0, 0.00001) );
 		//System.out.println( Metodos.Newton("x^2 - 3*x +2 ", -1, 3, 0.01) );
 		
+		double[] a= {0 , 3};
+		SolveMinimum.CoordenadasCiclicas("f(x1,x2) = (x1 - 2)^4 + (x1 - 2*x2)^2", a, 0.1);
 		
-		
-		
-		
-		
-		
-		String m[] = {"10 + x*5", "x^10"};
+		/*String m[] = {"10 + x*5", "x^10"};
 		FunctionMath f = new FunctionMath("f(x1,x2) = x1*2 + x2");
-
-		System.out.println(f.swap(m));
 		
-		/*double[] a= {1 , 9};
+		double[] a= {1 , 9};
 		MultiExpressionMath t= new MultiExpressionMath("x1 + x2 ", 2);
 		System.out.println(t.calculate(a));*/
 	}

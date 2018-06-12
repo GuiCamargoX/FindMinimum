@@ -35,45 +35,46 @@ public class SolveMinimum {
 			
 			}
 			
-			erro = fx.calculate(y[0]) - fx.calculate(y[point.length-1]);
+			double dif[]= FunctionMath.DiferençaEntreVetores(y[point.length-1], y[0]); 
+			erro = FunctionMath.Norma(dif);
 			
 			copyLastRowToArray(y,x); 
+		}
+		
+		for(double valor: x){
+			System.out.println(valor);
 		}
 		
 	}
 	
 	private static double minOmega( double y[], double d[], FunctionMath fx){
 		String omPos[] = new String[y.length];
-		String omNeg[] = new String[y.length];
 		double OmegaPos, OmegaNeg;
 		double Tamanh_passo = 1.5;
-		double inter= 3;
+		double inter= 5;
 		
 		
 		for(int i=0; i < y.length ; i++){
 			omPos[i] = new String(String.valueOf(y[i]) + " + x*" + String.valueOf(d[i])); //w(y,delta,d) = y + delta*d
-			omNeg[i] = new String(String.valueOf(y[i]) + " - x*" + String.valueOf(d[i]));
 		}
 		
-		String funcaoOmegaPos = fx.swap(omPos);
-		String funcaoOmegaNeg = fx.swap(omNeg);
+		String funcaoOmega = fx.swap(omPos);
 		
-		FunctionMath pos = new FunctionMath("f(x) =" + funcaoOmegaPos);
-		FunctionMath neg = new FunctionMath("f(x) =" + funcaoOmegaNeg);
+		FunctionMath pos = new FunctionMath("f(x) =" + funcaoOmega);
 		
 		OmegaPos = pos.calculate(Tamanh_passo);
-		OmegaNeg = neg.calculate(Tamanh_passo);
+		OmegaNeg = pos.calculate(-1*Tamanh_passo);
 		
 		if(OmegaPos < OmegaNeg){
-			return Metodos.Bisseccao(funcaoOmegaPos, pos.calculate(0), pos.calculate(inter), 0.00001);
+			return Metodos.Bisseccao(funcaoOmega, 0, inter, 0.00001);
 		}else{
-			return Metodos.Bisseccao(funcaoOmegaNeg, neg.calculate(inter), neg.calculate(0), 0.00001);
+			return Metodos.Bisseccao(funcaoOmega, -1*inter, 0, 0.00001);
 		}
 	
 	}
 	
 	
-	private static void copyArrayToRow(double matrix[][], double vect[], int row){
+	public static void copyArrayToRow(double matrix[][], double vect[], int row){
 	    
 		if (vect.length != matrix.length)
 	        throw new IllegalArgumentException("Invalid array length");
@@ -82,12 +83,12 @@ public class SolveMinimum {
 	}
 	
 	
-	private static void copyLastRowToArray(double matrix[][], double vect[]){
+	public static void copyLastRowToArray(double matrix[][], double vect[]){
 	    
 		if (vect.length != matrix.length)
 	        throw new IllegalArgumentException("Invalid array length");
 		
-		System.arraycopy( matrix[matrix.length-1], 0, vect, 0, vect.length);
+		System.arraycopy( matrix[matrix.length-1], 0, vect, 0, matrix.length);
 	}
 	
 }
