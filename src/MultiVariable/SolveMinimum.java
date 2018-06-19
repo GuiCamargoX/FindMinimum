@@ -50,7 +50,7 @@ public class SolveMinimum {
 	private static double minOmega( double y[], double d[], FunctionMath fx){
 		String omPos[] = new String[y.length];
 		double OmegaPos, OmegaNeg;
-		double Tamanh_passo = 1.5;
+		double Tamanh_passo = 0.00005;/*mexer no tamanho do passo de acordo com a ordem do epson*/
 		double inter= 5;
 		
 		
@@ -68,7 +68,7 @@ public class SolveMinimum {
 		if(OmegaPos < OmegaNeg){
 			return Metodos.Bisseccao(funcaoOmega, 0, inter, 0.00001);
 		}else{
-			return Metodos.Bisseccao(funcaoOmega, -1*inter, 0, 0.00001);
+			return Metodos.Bisseccao(funcaoOmega, -1*inter, 0, 0.0001);
 		}
 	
 	}
