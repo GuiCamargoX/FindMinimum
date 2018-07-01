@@ -1,9 +1,56 @@
 package MultiVariable;
 
+import org.mariuszgromada.math.mxparser.Function;
+import org.mariuszgromada.math.mxparser.mXparser;
+
 import Mono.Metodos;
 import Tool.FunctionMath;
 
 public class SolveMinimum {
+	
+	public static void Gradiente(String funcao, double point[], double epson) {
+		double direcao[] = new double[point.length];
+		double x[] = point;												//ponto inicial
+		double lambda, erro=1000;
+		double der1, der2;
+		double res;
+		Function fx2 = new Function("f(x1,x2) = der("+funcao+", x2)");
+		Function fx1 = new Function("f(x1,x2) = der("+funcao+", x1)");	 	   
+	    der1 = fx1.calculate(x[0], x[1]);
+		der2 = fx2.calculate(x[0], x[1]);
+		
+			direcao[0] = -der1;
+			direcao[1] = -der2;
+			
+		if(Math.abs(der1) > Math.abs(der2)) {
+			erro = Math.abs(der1);
+		}else {
+			erro = Math.abs(der2);
+		}
+		String funcaoaux = "f(x1, x2) = "+funcao;
+		FunctionMath fx= new FunctionMath(funcaoaux);
+		
+		
+		while( erro > epson){		
+			lambda = minOmega(x,direcao,fx);
+			x[0] = x[0] + lambda * direcao[0];
+			x[1] = x[1] + lambda * direcao[1];
+			
+			der1 = fx1.calculate(x[0], x[1]);
+			der2 = fx2.calculate(x[0], x[1]);
+			direcao[0] = -der1;
+			direcao[1] = -der2;
+			if(Math.abs(der1) > Math.abs(der2)) {
+				erro = der1;
+			}else {
+				erro = der2;
+			}
+		}
+		
+		Function f = new Function("f(x1, x2) = "+funcao);	         
+		mXparser.consolePrintln("Res Gradiente: f(x1, x2) =" + f.calculate(x[0], x[1])+" no ponto x1 = "+x[0]+" e x2 = "+x[1]);
+		
+	}
 	
 	public static void CoordenadasCiclicas(String funcao, double point[], double epson ){
 		double direcao[][] = new double[point.length][point.length];
