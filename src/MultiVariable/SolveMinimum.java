@@ -1,8 +1,8 @@
 package MultiVariable;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import org.mariuszgromada.math.mxparser.Function;
-import org.mariuszgromada.math.mxparser.mXparser;
-
 import Mono.Metodos;
 import Tool.FunctionMath;
 
@@ -12,43 +12,29 @@ public class SolveMinimum {
 		double direcao[] = new double[point.length];
 		double x[] = point;												//ponto inicial
 		double lambda, erro=1000;
-		double der1, der2;
-		double res;
-		Function fx2 = new Function("f(x1,x2) = der("+funcao+", x2)");
-		Function fx1 = new Function("f(x1,x2) = der("+funcao+", x1)");	 	   
-	    der1 = fx1.calculate(x[0], x[1]);
-		der2 = fx2.calculate(x[0], x[1]);
+		int i;
 		
-			direcao[0] = -der1;
-			direcao[1] = -der2;
+		Function der[];
+		FunctionMath fx =  new FunctionMath(funcao);
+				
+		der = fx.getPartialDer();
+		
+		while(erro > epson){
+			for(i=0; i< fx.getParametersNumber(); i++)
+				direcao[i] = setPrecision(-1 * der[i].calculate(x), 4);
 			
-		if(Math.abs(der1) > Math.abs(der2)) {
-			erro = Math.abs(der1);
-		}else {
-			erro = Math.abs(der2);
-		}
-		String funcaoaux = "f(x1, x2) = "+funcao;
-		FunctionMath fx= new FunctionMath(funcaoaux);
-		
-		
-		while( erro > epson){		
 			lambda = minOmega(x,direcao,fx);
-			x[0] = x[0] + lambda * direcao[0];
-			x[1] = x[1] + lambda * direcao[1];
 			
-			der1 = fx1.calculate(x[0], x[1]);
-			der2 = fx2.calculate(x[0], x[1]);
-			direcao[0] = -der1;
-			direcao[1] = -der2;
-			if(Math.abs(der1) > Math.abs(der2)) {
-				erro = der1;
-			}else {
-				erro = der2;
-			}
+			for(i=0; i< fx.getParametersNumber(); i++)
+				x[i] = setPrecision(x[i] + lambda*direcao[i], 4);
+			
+			erro = FunctionMath.Norma(direcao);
+			
 		}
 		
-		Function f = new Function("f(x1, x2) = "+funcao);	         
-		mXparser.consolePrintln("Res Gradiente: f(x1, x2) =" + f.calculate(x[0], x[1])+" no ponto x1 = "+x[0]+" e x2 = "+x[1]);
+		for(double valor: x){
+			System.out.println(valor);
+		}
 		
 	}
 	
@@ -136,6 +122,14 @@ public class SolveMinimum {
 	        throw new IllegalArgumentException("Invalid array length");
 		
 		System.arraycopy( matrix[matrix.length-1], 0, vect, 0, matrix.length);
+	}
+	
+	private static double setPrecision(double toBeTruncated,int scale){
+		Double truncatedDouble = BigDecimal.valueOf(toBeTruncated)
+				.setScale(scale, RoundingMode.HALF_UP)
+				.doubleValue();
+		//System.out.println(truncatedDouble);
+		return truncatedDouble;
 	}
 	
 }

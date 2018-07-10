@@ -1,13 +1,6 @@
 package main;
-import org.mariuszgromada.math.mxparser.Argument;
-import org.mariuszgromada.math.mxparser.Expression;
-import org.mariuszgromada.math.mxparser.Function;
-import org.mariuszgromada.math.mxparser.mXparser;
-
 import Mono.Metodos;
 import MultiVariable.SolveMinimum;
-import Tool.ExpressionMath;
-import Tool.FunctionMath;
 
 public class Main {
 
@@ -20,7 +13,7 @@ public class Main {
 		
 		/* Function */
 		double[] a= {0 , 3};
-		SolveMinimum.Gradiente("(x1-2)^4 + (x1 - 2*x2)^2", a, 0.0001);
+		SolveMinimum.Gradiente("f(x1,x2) = (x1-2)^4 + (x1 - 2*x2)^2", a, 0.1);
 
 		/*double[] a= {1 , 0};
 		SolveMinimum.CoordenadasCiclicas("f(x1,x2) = x1^2 + 2*x2 + 0.1*(x1^2 + x2^2 - 1)^2", a, 0.0001);*/
