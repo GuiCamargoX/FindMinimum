@@ -4,97 +4,117 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Vector;
-import org.mariuszgromada.math.mxparser.Argument;
-import Tool.ExpressionMath;
+import Tool.FunctionMath;
 
 public class Metodos {
+	static int scale = 10;
 	
-	public static double BuscaUniforme(String funcao, double a, double b,  double delta) {
-		double fq, fp, p = a, q;
-		ExpressionMath fx = new ExpressionMath(funcao, new Argument("x")) ;
+	public static double BuscaUniforme(String funcao, double a, double b,  double d) {
+		BigDecimal fq, fp, q;
+		BigDecimal p = BigDecimal.valueOf(a);
+		BigDecimal delta = BigDecimal.valueOf(d);
+		FunctionMath fx = new FunctionMath(funcao) ;
 		
 		do {
 		fp = fx.calculate(p);
-		q = p + delta;
+		q = p.add(delta);
 		fq = fx.calculate(q);
 		p = q;
-		}while(fq < fp);
+		}while(fq.compareTo(fp) < 0);
 		
-		p = p - 2*delta;
-		delta = delta/10;
+		p = p.subtract( delta.multiply(new BigDecimal("2.0")) );
+		delta = delta.divide(new BigDecimal("10") );
 		
 		do {
 			fp = fx.calculate(p);
-			q = p + delta;
+			q = p.add(delta);
 			fq = fx.calculate(q);
 			p = q;
-			}while(fq < fp);
+			}while(fq.compareTo(fp) < 0);
 		
-		p = p - delta;
-		return setPrecision(p, 4);
+		p = p.subtract( delta );
+		return p.doubleValue();
 		
 	}
 	
-	public static double BuscaDicotomica(String funcao, double A, double B,  double delta, double epson){
-		double fq, fp, p , q;
-		double a=A , b = B;
-		ExpressionMath fx = new ExpressionMath(funcao, new Argument("x")) ;
+	public static double BuscaDicotomica(String funcao, double A, double B,  double DELTA, double EPSON){
+		BigDecimal fq, fp, p , q;
 		
-		while( (b-a) >= epson){
-			 p = (a+b)/2 - delta;
-			 q = (a+b)/2 + delta;
+		BigDecimal a = BigDecimal.valueOf(A);
+		BigDecimal b = BigDecimal.valueOf(B);
+		BigDecimal epson = BigDecimal.valueOf(EPSON);
+		BigDecimal delta = BigDecimal.valueOf(DELTA);
+		BigDecimal erro = b.subtract(a);
+		FunctionMath fx = new FunctionMath(funcao) ;
+		
+		while( erro.compareTo(epson) >= 0){
+			 p = a.add(b).divide( new BigDecimal("2")).subtract(delta); /*(a+b)/2 - delta;*/
+			 q = a.add(b).divide( new BigDecimal("2")).add(delta); /*(a+b)/2 + delta;*/
 			 
 			 fp= fx.calculate(p);
 			 fq= fx.calculate(q);
 			 
-			 if( fp < fq)
+			 if( fp.compareTo(fq) < 0)
 				 b=q;
 			 else
 				 a=p;
+			 
+			 erro = b.subtract(a);
 		}
 		
-		return setPrecision( (a+b)/2 , 4 );
+		return a.add(b).divide( new BigDecimal("2") ).doubleValue();
 		
 	}
 	
-	public static double SecaoAurea(String funcao, double A, double B,  double epson ){
-		double fq, fp, p , q;
-		double a=A , b = B;
-		ExpressionMath fx = new ExpressionMath(funcao, new Argument("x")) ;
-		double alfa= 0.61803;
-		double beta= 0.38197;
+	public static double SecaoAurea(String funcao, double A, double B,  double EPSON ){
+		BigDecimal fq, fp, p , q;
 		
-		if(b<a)
+		BigDecimal a = BigDecimal.valueOf(A);
+		BigDecimal b = BigDecimal.valueOf(B);
+		BigDecimal epson = BigDecimal.valueOf(EPSON);
+		BigDecimal erro = b.subtract(a);
+		FunctionMath fx = new FunctionMath(funcao) ;
+		
+		BigDecimal alfa= new BigDecimal("0.61803");
+		BigDecimal beta= new BigDecimal("0.38197");
+		
+		if(b.compareTo(a) < 0)
 			throw new IllegalArgumentException();
 		
-		while( (b-a)>= epson){
+		while( erro.compareTo(epson) >= 0 ){
 			
-			p = a + beta*(b-a);
-			q = a + alfa*(b-a);
+			p = a.add( beta.multiply(erro) ) ;/*a + beta*(b-a);*/
+			q = a.add( alfa.multiply(erro) ) ;/*a + alfa*(b-a);*/
 			
 			fp= fx.calculate(p);
 			fq= fx.calculate(q);
 		
-			if( fp < fq)
+			if( fp.compareTo(fq) < 0)
 				 b=q;
 			 else
 				 a=p;
+		
+			erro = b.subtract(a);
 		}
 		
-		return setPrecision((a+b)/2 , 4) ;
+		return a.add(b).divide( new BigDecimal("2") ).doubleValue();
 		
 	}
 	
-	public static double BuscaFibonacci(String funcao, double A, double B,  double epson ){
-		double fq, fp, p , q;
-		double a=A , b = B;
-		ExpressionMath fx = new ExpressionMath(funcao, new Argument("x")) ;
+	public static double BuscaFibonacci(String funcao, double A, double B,  double EPSON ){
+		BigDecimal fq, fp, p , q;
+		
+		BigDecimal a = BigDecimal.valueOf(A);
+		BigDecimal b = BigDecimal.valueOf(B);
+		BigDecimal erro = b.subtract(a);
+		BigDecimal fibo1,fibo2,fiboR;
+		FunctionMath fx = new FunctionMath(funcao) ;
 		
 		List<Integer> fib = new Vector<Integer>();
 		fib.add(1);
 		fib.add(1);
 		int k=1;
-		double it= (b-a)/epson;
+		double it= (B-A)/EPSON;
 		
 		while( fib.get(k) < it){
 			fib.add( fib.get(k) + fib.get(k-1) );
@@ -102,62 +122,78 @@ public class Metodos {
 		}
 
 		for(int i=0; i < k-2 ; i++){
-			p = a + (fib.get( k - 2 - i).doubleValue() /fib.get( k - i ).doubleValue() ) * (b - a);
-			q = a + (fib.get( k - 1 - i).doubleValue() /fib.get( k - i ).doubleValue() ) * (b - a);
+			 fibo1 = new BigDecimal( fib.get( k - 2 - i).toString() );
+			 fibo2 = new BigDecimal( fib.get( k - i ).toString() );
+			 fiboR = fibo1.divide( fibo2, scale , BigDecimal.ROUND_HALF_UP );
+			 p = a.add( fiboR.multiply(erro) );
+			/*p = a + (fib.get( k - 2 - i).doubleValue() /fib.get( k - i ).doubleValue() ) * (b - a);*/
+			
+			fibo1 = new BigDecimal( fib.get( k - 1 - i).toString());
+			fiboR = fibo1.divide(fibo2, scale , BigDecimal.ROUND_HALF_UP);
+			q = a.add( fiboR.multiply(erro) );
+			/*q = a + (fib.get( k - 1 - i).doubleValue() /fib.get( k - i ).doubleValue() ) * (b - a);*/
 
 			fp= fx.calculate(p);
 			fq= fx.calculate(q);
 		
-			if( fp < fq)
+			if( fp.compareTo(fq) < 0 )
 				 b=q;
 			 else
-				 a=p;	
+				 a=p;
+		
+			erro = b.subtract(a);
  		}
 				
-		return setPrecision( (a+b)/2 , 4);
-		
+		return a.add(b).divide( new BigDecimal("2") ).doubleValue();
 		
 	}
 	
-	public static double Bisseccao(String funcao, double A, double B, double epson) {
+
+	public static double Bisseccao(String funcao, double A, double B, double EPSON) {
 		
-		double a= A, b = B , x = 0;
-		double resder;
-		ExpressionMath fx = new ExpressionMath("der("+funcao+", x)", new Argument("x")) ;
+		BigDecimal a = BigDecimal.valueOf(A);
+		BigDecimal b = BigDecimal.valueOf(B);
+		BigDecimal epson = BigDecimal.valueOf(EPSON);
+		BigDecimal erro = b.subtract(a);
+		BigDecimal x = null, resder ;
 		
-		while((b-a) > epson) {
-			x = (a+b)/2;
-			resder = fx.calculate(x);
+		
+		FunctionMath fx = new FunctionMath(funcao) ;
+		FunctionMath der[] = fx.getPartialDer();
+		
+		while( erro.compareTo(epson) > 0) {
+			x = a.add(b).divide( new BigDecimal("2") );
+			resder = der[0].calculate(x);
 			
-			if(resder == 0){
+			if(resder.compareTo(new BigDecimal("0")) == 0){
 				b=a; //sai do loop
 			}else{
-				if(resder < 0)
+				if(resder.compareTo(new BigDecimal("0")) < 0)
 					a = x;
 				else
 					b = x;
 			}
 			
-			
+			erro = b.subtract(a);	
 		}
 		
-		return setPrecision(x, 4);
+		return x.doubleValue();
 		
 	}
 	
-	
+
 	public static double Newton(String funcao, double A, double B, double epson) {
 
 		double x = (B+A)/2 ; //chute inicial
 		double resder1=100, resder2;
 		
-		ExpressionMath fx1 = new ExpressionMath("der("+funcao+", x)", new Argument("x") ) ;
-		ExpressionMath fx2 = new ExpressionMath("der(der("+funcao+", x), x)", new Argument("x")) ;
-		
+		FunctionMath fx = new FunctionMath(funcao) ;
+		FunctionMath fx1[] = fx.getPartialDer();
+		FunctionMath fx2[] = fx1[0].getPartialDer();
 		
 		while( Math.abs(resder1) > epson) {
-			resder1 = fx1.calculate(x);
-			resder2 = fx2.calculate(x);
+			resder1 = fx1[0].calculate(x);
+			resder2 = fx2[0].calculate(x);
 			
 			if(resder2 == 0)
 				throw new IllegalArgumentException();
@@ -166,16 +202,8 @@ public class Metodos {
 			
 		}
 		
-		return setPrecision(x, 4);
+		return x;
 	}
-	
-	
-	private static double setPrecision(double toBeTruncated,int scale){
-		Double truncatedDouble = BigDecimal.valueOf(toBeTruncated)
-				.setScale(scale, RoundingMode.HALF_UP)
-				.doubleValue();
-		//System.out.println(truncatedDouble);
-		return truncatedDouble;
-	}
+
 	
 }

@@ -1,17 +1,21 @@
 package main;
+
+import java.math.BigDecimal;
 import Mono.Metodos;
 import MultiVariable.SolveMinimum;
+import Tool.FunctionMath;
 
 public class Main {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Metodos.BuscaDicotomica("x^2 + 2", -3, 6, 0.01, 0.1);
-		Metodos.BuscaFibonacci("x^2 - 3*x + 2", -1, 3, 0.1);
-		Metodos.BuscaFibonacci("x*sin(4*x)", 0, 3, 0.1);
-	
+		System.out.println(Metodos.BuscaDicotomica("f(x)= x^2 - 3*x + 2", -1, 3, 0.01, 0.1)) ;
+		//System.out.println(Metodos.Bisseccao("f(x)= x^2 - 3*x + 2", -1, 3, 0.3)) ;
 		
-		/* Function */
+		
+		FunctionMath e = new FunctionMath("f(x)= der( x+1 ,x )");
+		System.out.println(e.calculate(new BigDecimal("2")));
+		/* Function 
 		double[] a= {0 , 3};
 		SolveMinimum.Gradiente("f(x1,x2) = (x1-2)^4 + (x1 - 2*x2)^2", a, 0.1);
 

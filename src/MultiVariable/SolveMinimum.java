@@ -99,9 +99,9 @@ public class SolveMinimum {
 		OmegaNeg = pos.calculate(-1*Tamanh_passo);
 		
 		if(OmegaPos < OmegaNeg){
-			return Metodos.Bisseccao(funcaoOmega, 0, inter, 0.00001);
+			return Metodos.Bisseccao("f(x) =" + funcaoOmega, 0, inter, 0.00001);
 		}else{
-			return Metodos.Bisseccao(funcaoOmega, -1*inter, 0, 0.0001);
+			return Metodos.Bisseccao("f(x) =" + funcaoOmega, -1*inter, 0, 0.0001);
 		}
 	
 	}

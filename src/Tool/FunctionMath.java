@@ -1,21 +1,70 @@
 package Tool;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import com.udojava.evalex.AbstractFunction;
+import com.udojava.evalex.Expression;
 import org.mariuszgromada.math.mxparser.Function;
 
 
 public class FunctionMath extends Function {
-	int num_var;
-	Function der[];
+	private int num_var;
+	private Expression exp;
+	private FunctionMath der[];
 	
 	public FunctionMath(String funcao){
 		super( funcao );
+		exp = new Expression(this.getFunctionExpressionString());
+		
+		exp.addFunction(new AbstractFunction("der", 2) {
+		    @Override
+		    public BigDecimal eval(List<BigDecimal> parameters) {
+						if (parameters.size() == 0) {
+							try {
+								throw new Exception("average requires at least one parameter");
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						BigDecimal avg = new BigDecimal(0);
+						
+						for (BigDecimal parameter : parameters) {
+								avg = avg.add(parameter);
+						}
+						return avg.divide(new BigDecimal(parameters.size()));
+		    }
+		    
+		});
+
+		
+	}
+		
+	public BigDecimal calculate(BigDecimal... parameters) {
+		
+		/*if( this.getFunctionExpressionString().contains("der") ){
+			double val[] = new double[parameters.length];
+			int i=0;
+			
+			for(BigDecimal x:parameters){
+				val[i] = x.doubleValue(); i++;
+			}
+			
+			return BigDecimal.valueOf(this.calculate(val));
+		}*/
+		
+		for(int i=0; i<this.getParametersNumber(); i++)
+			exp.with( this.getParameterName(i) , parameters[i]);
+		
+		return exp.eval();
 	}
 	
-	public Function[] getPartialDer(){
-		der = new Function[this.getParametersNumber()];
+	public FunctionMath[] getPartialDer(){
+		der = new FunctionMath[this.getParametersNumber()];
 		
 		for(int i =0; i<this.getParametersNumber() ; i++ ){
-			der[i] = new Function(this.getFunctionDescription()+ "= der("+this.getFunctionExpressionString()+", "+ this.getParameterName(i) +")") ;
+			der[i] = new FunctionMath(this.getFunctionDescription()+ "= der("+this.getFunctionExpressionString()+", "+ this.getParameterName(i) +")") ;
 		}
 		
 		return der;
@@ -68,6 +117,14 @@ public class FunctionMath extends Function {
 		}
 		
 		return dif;
+	}
+	
+	private static double setPrecision(double toBeTruncated,int scale){
+		Double truncatedDouble = BigDecimal.valueOf(toBeTruncated)
+				.setScale(scale, RoundingMode.HALF_UP)
+				.doubleValue();
+		//System.out.println(truncatedDouble);
+		return truncatedDouble;
 	}
 		
 }
