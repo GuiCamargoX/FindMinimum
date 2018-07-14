@@ -3,6 +3,9 @@ package Tool;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.udojava.evalex.AbstractFunction;
 import com.udojava.evalex.Expression;
 import org.mariuszgromada.math.mxparser.Function;
@@ -12,47 +15,75 @@ public class FunctionMath extends Function {
 	private int num_var;
 	private Expression exp;
 	private FunctionMath der[];
+	double H = 10.21;//0.3473;
 	
 	public FunctionMath(String funcao){
 		super( funcao );
 		exp = new Expression(this.getFunctionExpressionString());
 		
-		exp.addFunction(new AbstractFunction("der", 2) {
+		/*exp.addFunction(new AbstractFunction("der", 2) {
 		    @Override
 		    public BigDecimal eval(List<BigDecimal> parameters) {
-						if (parameters.size() == 0) {
-							try {
-								throw new Exception("average requires at least one parameter");
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
+		    	        exp.with("x", new BigDecimal("2"));
 						BigDecimal avg = new BigDecimal(0);
-						
-						for (BigDecimal parameter : parameters) {
-								avg = avg.add(parameter);
-						}
-						return avg.divide(new BigDecimal(parameters.size()));
+
+						return parameters.get(2);
 		    }
 		    
-		});
+		});*/
 
 		
 	}
 		
 	public BigDecimal calculate(BigDecimal... parameters) {
+		String bodyFunction = new String( this.getFunctionExpressionString() );
 		
-		/*if( this.getFunctionExpressionString().contains("der") ){
-			double val[] = new double[parameters.length];
-			int i=0;
+		if( bodyFunction.contains("der(") ){
+			bodyFunction = bodyFunction.replaceAll("\\s+","");
 			
-			for(BigDecimal x:parameters){
-				val[i] = x.doubleValue(); i++;
+			String func = null;
+			String derParam = null;
+			
+			Pattern pattern = Pattern.compile("^der\\(([\\w\\d\\p{Punct}]+),(\\p{Alnum}+)\\)");//^der\\(([\\w\\d]+),(\\w)\\)
+			Matcher m = pattern.matcher(bodyFunction);
+		    if (m.find( )) {
+				func = m.group(1);
+				derParam = m.group(2);
+		    }else {
+		          System.out.println("NO MATCH");
+		    }
+		      
+			//--------------------------------------------
+
+			Expression e = new Expression(func);
+			int indexDerParam = -1;
+			
+			for(int i=0; i<this.getParametersNumber(); i++){
+				if(!this.getParameterName(i).equals(derParam))
+					e.with( this.getParameterName(i) , parameters[i]);
+				else
+					indexDerParam = i;
 			}
+			//-----------Points----------------------------------
+			BigDecimal p1,p2,p3,p4;
+			BigDecimal h = BigDecimal.valueOf(H);
+			e.with(derParam, parameters[indexDerParam].subtract(h.multiply(new BigDecimal("2"))));
+			p1 = e.eval();
+			e.with(derParam, parameters[indexDerParam].subtract(h));
+			p2 = e.eval();
+			e.with(derParam, parameters[indexDerParam].add(h));
+			p3 = e.eval();
+			e.with(derParam, parameters[indexDerParam].add(h.multiply(new BigDecimal("2"))));
+			p4 = e.eval();
 			
-			return BigDecimal.valueOf(this.calculate(val));
-		}*/
+			//System.out.println(matcher.group(1));
+			
+			BigDecimal resp;
+			resp = p1.subtract( p2.multiply(new BigDecimal("8")) ).add(p3.multiply(new BigDecimal("8"))).subtract(p4);
+			resp = resp.divide(h.multiply(new BigDecimal("12")), 10, BigDecimal.ROUND_HALF_UP );
+			
+			return resp;
+		}
 		
 		for(int i=0; i<this.getParametersNumber(); i++)
 			exp.with( this.getParameterName(i) , parameters[i]);
