@@ -159,11 +159,10 @@ public class Metodos {
 		
 		
 		FunctionMath fx = new FunctionMath(funcao) ;
-		FunctionMath der[] = fx.getPartialDer();
 		
 		while( erro.compareTo(epson) > 0) {
 			x = a.add(b).divide( new BigDecimal("2") );
-			resder = der[0].calculate(x);
+			resder = fx.FinDiff(1, fx.getParameterName(0), x) ;
 			
 			if(resder.compareTo(new BigDecimal("0")) == 0){
 				b=a; //sai do loop
@@ -182,27 +181,31 @@ public class Metodos {
 	}
 	
 
-	public static double Newton(String funcao, double A, double B, double epson) {
+	public static double Newton(String funcao, double A, double B, double EPSON, double x0) {
+		BigDecimal a = BigDecimal.valueOf(A);
+		BigDecimal b = BigDecimal.valueOf(B);
+		BigDecimal epson = BigDecimal.valueOf(EPSON);
 
-		double x = (B+A)/2 ; //chute inicial
-		double resder1=100, resder2;
+		BigDecimal x = null;
+		BigDecimal resder1 = new BigDecimal("100");
+		BigDecimal resder2;
+
+		x = BigDecimal.valueOf(x0) ; //valor inicial
 		
 		FunctionMath fx = new FunctionMath(funcao) ;
-		FunctionMath fx1[] = fx.getPartialDer();
-		FunctionMath fx2[] = fx1[0].getPartialDer();
 		
-		while( Math.abs(resder1) > epson) {
-			resder1 = fx1[0].calculate(x);
-			resder2 = fx2[0].calculate(x);
+		while( resder1.abs().compareTo(epson) > 0) {
+			resder1 = fx.FinDiff(1, fx.getParameterName(0) , x);
+			resder2 = fx.FinDiff(2, fx.getParameterName(0), x);
 			
-			if(resder2 == 0)
+			if(resder2.compareTo(new BigDecimal("0")) == 0)
 				throw new IllegalArgumentException();
 			
-			x = x - (resder1/resder2);
+			x = x.subtract(resder1.divide( resder2 , 10, BigDecimal.ROUND_HALF_UP) );/*x - (resder1/resder2);*/
 			
 		}
 		
-		return x;
+		return x.doubleValue();
 	}
 
 	

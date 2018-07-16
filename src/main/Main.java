@@ -13,13 +13,12 @@ public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println(Metodos.BuscaDicotomica("f(x)= x^2 - 3*x + 2", -1, 3, 0.01, 0.1)) ;
-		//System.out.println(Metodos.Bisseccao("f(x)= x^2 - 3*x + 2", -1, 3, 0.3)) ;
+		System.out.println(Metodos.Bisseccao("f(x)= x^2 - 3*x + 2", -1, 3, 0.1)) ;
+		System.out.println(Metodos.Newton("f(x)= x^2 - 3*x + 2", -1, 3, 0.1, 0) );
+		//System.out.println(Metodos.Newton("f(x)= e^x - x^3 + 1", -1, 6, 0.0001, 5) );
 		
-		
-		FunctionMath e = new FunctionMath("f(x)= der1( x^3+1, x )");
-		Function e2 = new Function("f(x)= der( x^3+1, x )");
-		System.out.println(e.calculate(new BigDecimal("220.001") ));
-		System.out.println(e2.calculate(220.001));
+		FunctionMath p = new FunctionMath("f(x)= e^x - x^3 + 1");
+		System.out.println(p.FinDiff(2, "x", new BigDecimal("5")));
 		/* Function 
 		double[] a= {0 , 3};
 		SolveMinimum.Gradiente("f(x1,x2) = (x1-2)^4 + (x1 - 2*x2)^2", a, 0.1);
