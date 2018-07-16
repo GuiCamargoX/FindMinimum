@@ -16,10 +16,10 @@ public class Main {
 		//System.out.println(Metodos.Bisseccao("f(x)= x^2 - 3*x + 2", -1, 3, 0.3)) ;
 		
 		
-		FunctionMath e = new FunctionMath("f(x)= der( x^3+1, x )");
+		FunctionMath e = new FunctionMath("f(x)= der1( x^3+1, x )");
 		Function e2 = new Function("f(x)= der( x^3+1, x )");
-		System.out.println(e.calculate(new BigDecimal("90.223") ));
-		System.out.println(e2.calculate(90.223));
+		System.out.println(e.calculate(new BigDecimal("220.001") ));
+		System.out.println(e2.calculate(220.001));
 		/* Function 
 		double[] a= {0 , 3};
 		SolveMinimum.Gradiente("f(x1,x2) = (x1-2)^4 + (x1 - 2*x2)^2", a, 0.1);
